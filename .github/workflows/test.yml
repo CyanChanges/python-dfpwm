@@ -28,7 +28,7 @@ jobs:
   test:
     strategy:
           matrix:
-            os: [ubuntu-latest, window-latest, macos-latest]
+            os: [ubuntu-latest, macos-latest]
             version:
               - '3.9'
               - '3.10'
