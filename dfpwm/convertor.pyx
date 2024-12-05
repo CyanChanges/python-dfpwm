@@ -8,7 +8,7 @@ cimport numpy as np
 
 cdef int PREC = 10
 
-cdef short* proc_untracked(const float[:] input_data, const int sz) nogil:
+cdef short* proc_untracked(const double[:] input_data, const int sz) nogil:
     cdef int charge = 0
     cdef int strength = 0
     cdef short previous_bit = False
@@ -66,7 +66,7 @@ cdef short* proc_untracked(const float[:] input_data, const int sz) nogil:
     return out
 
 cpdef compressor(
-        in_array: np.ndarray[np.float32],
+        in_array: np.ndarray[np.float64],
         tracker: "typing.Callable"[["typing.Iterable"], "typing.Iterable"] = None
 ):
     cdef int charge = 0
@@ -74,7 +74,7 @@ cpdef compressor(
     cdef char previous_bit = False
 
     cdef size_t sz = len(in_array) // 8
-    cdef const float [:] in_array_view = in_array
+    cdef const double [:] in_array_view = in_array
 
     cdef short *out_array = <short*>malloc(sizeof(short) * sz)
 
@@ -129,5 +129,5 @@ cpdef compressor(
         out_array = array
 
     cdef np.ndarray result = np.asarray(<short[:sz]>out_array).astype('int8')
-    free(<void*>array)
+    free(<void*>out_array)
     return result

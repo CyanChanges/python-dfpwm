@@ -7,15 +7,30 @@ from .constants import SAMPLE_RATE
 T = TypeVar("T", bound=np.dtype)
 
 
-def resample_from_file(io: "BinaryIO", target_samplerate=SAMPLE_RATE, dtype: T = np.float32) -> \
-        tuple["np.ndarray", float]:
+def resample_from_file(
+        io: "BinaryIO",
+        to_sample_rate=SAMPLE_RATE,
+        dtype: T = np.float32
+) -> tuple["np.ndarray", float]:
+
     import warnings
-    import librosa
-    warnings.warn("resample_from_file is deprecated, use dfpwm.resample instead")
-    return librosa.load(io, dtype=dtype, sr=target_samplerate)
+    try:
+        import librosa
+    except ImportError as e:
+        raise ImportError("resample feature is not available") from e
+    warnings.warn("resample_from_file is deprecated, use `dfpwm.resample` instead")
+    return librosa.load(io, dtype=dtype, sr=to_sample_rate)
 
 
-def resample(data: np.ndarray, origin_samplerate: float, target_sample_rate=SAMPLE_RATE, dtype: T = np.float32) -> \
-        np.ndarray[T]:
-    import librosa
-    return librosa.resample(data, orig_sr=origin_samplerate, target_sr=target_sample_rate).astype(dtype)
+def resample(
+        data: np.ndarray,
+        source_sample_rate: int,
+        to_sample_rate=SAMPLE_RATE,
+        dtype: T = np.float32
+) -> np.ndarray[T]:
+
+    try:
+        import librosa
+    except ImportError as e:
+        raise ImportError("resample feature is not available") from e
+    return librosa.resample(data, orig_sr=source_sample_rate, target_sr=to_sample_rate).astype(dtype)
